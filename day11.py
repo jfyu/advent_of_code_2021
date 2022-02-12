@@ -11,52 +11,50 @@ def read_data(dataset):
         grid.append(list(map(int, list(l.strip('\n')))))
     return grid
 
-def directions(i,j):
-    return ((i+1, j), (i-1, j), (i,j+1), (i, j-1), (i-1,j-1), (i-1, j+1), (i+1, j-1), (i+1, j+1))
+def directions(i,j, m, n):
+    nbrs = []
+    for x, y in ((i+1, j), (i-1, j), (i,j+1), (i, j-1), (i-1,j-1), (i-1, j+1), (i+1, j-1), (i+1, j+1)):
+        if 0<=x<m and 0<=y<n:
+            nbrs.append((x,y))
+    return nbrs
 
-def increase_energy(grid):
+def advance(grid):
     m = len(grid) #row 
     n = len(grid[0]) #columns
-    stack = []
-    seen = set()
-    for i in range(m):
-        for j in range(n):
-            grid[i][j] += 1
-            if grid[i][j] >9:
-                stack.append((i,j))
-                seen.add((i,j))
-    return stack,seen
-
-def reset_energy(grid):
-    m = len(grid) #row 
-    n = len(grid[0]) #columns
+    flashed = []
+    neighbours = []
     flashes = 0
     for i in range(m):
         for j in range(n):
-            if grid[i][j]>9:
+            if grid[i][j]==9:
                 grid[i][j] = 0
-                flashes += 1
-    return flashes
+                flashes +=1
+                flashed.append((i,j))
+                neighbours.extend(directions(i,j, m, n))
+            else:
+                grid[i][j]+=1
+    while neighbours:
+        i,j = neighbours.pop(0)
+        if (i,j) not in flashed:
+            if grid[i][j] == 9:
+                grid[i][j] = 0
+                flashes+=1
+                flashed.append((i,j))
+                neighbours.extend(directions(i,j,m,n))
+            else:
+                grid[i][j] += 1
+    return int(flashes)
+grid = read_data('inputs')
+flashes = 0
+for step in range(100):
+    flashes+=advance(grid)
+print(flashes)
 
-def dfs(grid, stack, seen):
-    m = len(grid) #row 
-    n = len(grid[0]) #columns
-    while stack:
-        i,j = stack.pop() #LIFO
-        seen.add((i,j))
-        for k,l in directions(i,j):
-            if 0<=k<m and 0<=l<n and (k,l) not in seen:
-                grid[k][l]+=1
-                if grid[k][l]>9:
-                    grid[k][l] = 10 #reset to 10
-                    stack.append((k,l))
-
-def advance(grid):
-    # first we increase the energy
-    stack,seen = increase_energy(grid)
-    #DFS
-    dfs(grid, stack, seen)
-    flashes = reset_energy(grid)
-    return flashes
-
-grid = read_data('test')
+#part 2
+grid = read_data('inputs')
+flashes = 0
+step = 0
+while flashes < len(grid)*len(grid[0]):
+    flashes=advance(grid)
+    step+=1
+print(step)
