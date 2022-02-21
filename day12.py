@@ -33,27 +33,3 @@ def dfs(cave, visited, one_off):
 print(dfs('start', set(), ''))
 print(dfs('start', set(), ' '))
 
-# def explicit_dfs(paths):
-    # #this is showing 4 because it doesn't understand how to take into consideration that 
-    # #A can be visited multiple times
-    # visited = set()
-    # counter = 0
-    # stack = []
-    # stack.append('start')
-    # while stack:
-        # cave = stack.pop()
-        # if cave.islower() and cave != 'end':
-            # visited.add(cave)
-        # for next_cave in paths[cave]:
-            # if next_cave != 'end' and next_cave not in visited:
-                # print(f"{cave}-{next_cave}")
-                # stack.append(next_cave)
-                # print(stack)
-            # if next_cave == 'end':
-                # print(f"{cave}-{next_cave}")
-                # counter += 1
-               # # print(stack)
-    # print(visited)
-    # return counter
-
-
